@@ -19,7 +19,7 @@ const FILES_TO_CACHE = [
 ];
 const CACHE_NAME = "static-cache-v2";
 const DATA_CACHE_NAME = "data-cache-v1";
-const TRANSACTION_CACHE = "transaction-v1";
+// const TRANSACTION_CACHE = "transaction-v1";
 // install
 self.addEventListener("install", function (evt) {
     evt.waitUntil(
@@ -48,16 +48,16 @@ self.addEventListener("activate", function (evt) {
 // fetch
 self.addEventListener("fetch", function (evt) {
     // cache successful requests to the API
-    if (evt.request.url.includes("/api/posts")) {
-        evt.respondWith(
-            caches.open(TRANSACTION_CACHE).then(cache => {
-                return Promise.all(
-                    //fetch each thing inside the cache,
-                    // then clear it if we are online
-                );
-            })
-        )
-    }
+    // if (evt.request.url.includes("/api/")) {
+    //     evt.respondWith(
+    //         caches.open(TRANSACTION_CACHE).then(cache => {
+    //             return Promise.all(
+    //                 //fetch each thing inside the cache,
+    //                 // then clear it if we are online
+    //             );
+    //         })
+    //     )
+    // }
     if (evt.request.url.includes("/api/")) {
         evt.respondWith(
             caches.open(DATA_CACHE_NAME).then(cache => {
@@ -67,16 +67,16 @@ self.addEventListener("fetch", function (evt) {
                         if (response.status === 200) {
                             // we are online
                             //
-                            // cache.put(evt.request.url, response.clone());
+                            cache.put(evt.request.url, response.clone());
                         }
                         return response;
                     })
                     .catch(err => {
                         // Network request failed, try to get it from the cache.
                         // we are offline
-                        console.log(evt.request.url);
-                        console.log(evt.request);
-                        cache.put(evt.request.url, evt.request.clone());
+                        // console.log(evt.request.url);
+                        // console.log(evt.request);
+                        // cache.put(evt.request.url, evt.request.clone());
                         return cache.match(evt.request);
                     });
             }).catch(err => console.log(err))
